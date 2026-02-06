@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from routes.user_routes import router as user_routes
 from db import get_db
-
-
+from sqlalchemy import create_engine
+from models import Base
 app = FastAPI()
 app.include_router(user_routes)
 
