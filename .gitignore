@@ -2,3 +2,5 @@ env
 *.pyc
 .env
 routes/user_routes.py
+venv
+
