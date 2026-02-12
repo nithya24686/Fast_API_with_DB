@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
+from fastapi import Header, HTTPException
 import os
 
 # JWT Configuration
@@ -45,3 +46,14 @@ def create_tokens(user_id: int, email: str) -> dict:
         "refresh_token": create_refresh_token(token_data),
         "token_type": "bearer"
     }
+
+
+def get_current_user(authorization: str = Header(None)):
+    """FastAPI dependency to extract and verify the current user from the Authorization header."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    token = authorization.replace("Bearer ", "")
+    payload = verify_token(token, token_type="access")
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return {"id": int(payload["sub"]), "email": payload["email"]}
